@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>健身直播回放</title>
+  <meta name="description" content="每日健身直播回放页面" />
+  <style>
+    :root {
+      --bg: #FFF8F3;
+      --card: #FFFFFF;
+      --text: #1F2937;
+      --muted: #6B7280;
+      --primary: #FF6B4A;
+      --primary-dark: #F0522E;
+      --green: #22C55E;
+      --border: #F3E8E2;
+      --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+        "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(180deg, #FFFDFB 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* 首页 */
+    .home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 0;
+    }
+
+    .home-card {
+      width: min(460px, 100%);
+      background: var(--card);
+      border-radius: 28px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #FFE5DD;
+      box-shadow: 0 8px 18px rgba(255, 107, 74, 0.18);
+    }
+
+    .name {
+      margin: 18px 0 8px;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .desc {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .main-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 52px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), #FF8A65);
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(255, 107, 74, 0.22);
+      transition: transform .18s ease, opacity .18s ease;
+    }
+
+    .main-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    /* 回放页 */
+    .replay-page {
+      padding: 24px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .back-btn {
+      border: none;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .banner {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      height: 220px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow);
+      background: #ddd;
+    }
+
+    .banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(31,41,55,0.65) 0%, rgba(31,41,55,0.22) 60%, rgba(31,41,55,0.08) 100%);
+      display: flex;
+      align-items: center;
+      padding: 28px;
+    }
+
+    .banner-text h1 {
+      margin: 0 0 8px;
+      color: #fff;
+      font-size: clamp(26px, 4vw, 38px);
+    }
+
+    .banner-text p {
+      margin: 0;
+      color: rgba(255,255,255,0.92);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 18px 0 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .video-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .video-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(31, 41, 55, 0.04);
+    }
+
+    .video-date {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      background: #ECFDF3;
+      color: #15803D;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .video-title {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .video-desc {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .video-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 16px;
+      text-decoration: none;
+      color: white;
+      background: var(--primary);
+      border-radius: 12px;
+      font-weight: 700;
+      transition: background .18s ease;
+    }
+
+    .video-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      border: none;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100% - 20px, 960px);
+      }
+
+      .home-card {
+        padding: 28px 20px;
+      }
+
+      .banner {
+        height: 190px;
+      }
+
+      .banner-overlay {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 首页 -->
+  <section id="homePage" class="home">
+    <div class="container">
+      <div class="home-card">
+        <!-- 这里替换成你的头像 -->
+        <img
+          class="avatar"
+          src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80"
+          alt="头像"
+        />
+
+        <!-- 这里替换成你的名字 -->
+        <div class="name">XX教练</div>
+        <p class="desc">每日健身直播回放 · 碎片时间也能跟练，陪你一起健康减脂、轻松塑形。</p>
+
+        <button class="main-btn" onclick="goReplayPage()">直播回放</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 回放页 -->
+  <section id="replayPage" class="replay-page hidden">
+    <div class="container">
+      <div class="topbar">
+        <button class="back-btn" onclick="goHomePage()">← 返回首页</button>
+      </div>
+
+      <div class="banner">
+        <!-- 这里替换成你的横幅图 -->
+        <img
+          src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80"
+          alt="直播回放横幅"
+        />
+        <div class="banner-overlay">
+          <div class="banner-text">
+            <h1>每日直播回放</h1>
+            <p>坚持每天一点点，轻松养成健康好身材。跟着练，更容易坚持。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <h2>今日 / 往期回放</h2>
+        <span id="totalCount"></span>
+      </div>
+
+      <div id="videoList" class="video-list"></div>
+
+      <div class="pagination">
+        <button id="prevBtn" class="page-btn" onclick="prevPage()">上一页</button>
+        <span id="pageInfo" class="page-info"></span>
+        <button id="nextBtn" class="page-btn" onclick="nextPage()">下一页</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // =========================
+    // 这里每天更新你的回放数据
+    // 每页固定显示 7 个
+    // =========================
+    const videos = [
+      {
+        date: "2026-04-28",
+        title: "Day 1｜全身燃脂训练直播回放",
+        desc: "适合减脂新手，20分钟全身激活，帮助提升代谢。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-27",
+        title: "Day 2｜居家瘦肚子训练直播回放",
+        desc: "重点训练腹部核心，适合居家跟练。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-26",
+        title: "Day 3｜腿臀塑形训练直播回放",
+        desc: "强化腿臀线条，让下半身更紧致。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-25",
+        title: "Day 4｜暴汗有氧燃脂直播回放",
+        desc: "中高强度有氧训练，适合想快速流汗燃脂的人。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-24",
+        title: "Day 5｜肩背体态改善训练回放",
+        desc: "改善圆肩驼背，提升整体气质。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-23",
+        title: "Day 6｜新手减脂训练回放",
+        desc: "低门槛动作，新手也能轻松完成。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-22",
+        title: "Day 7｜核心稳定训练回放",
+        desc: "重点加强核心稳定性，让运动更安全有效。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-21",
+        title: "Day 8｜轻松拉伸放松直播回放",
+        desc: "适合运动后放松，缓解身体紧张。",
+        url: "https://www.youtube.com/"
+      },
+      {
+        date: "2026-04-20",
+        title: "Day 9｜晨间唤醒训练直播回放",
+        desc: "晨间唤醒全身，开启活力一天。",
+        url: "https://www.youtube.com/"
+      }
+    ];
+
+    const homePage = document.getElementById("homePage");
+    const replayPage = document.getElementById("replayPage");
+    const videoList = document.getElementById("videoList");
+    const totalCount = document.getElementById("totalCount");
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const pageSize = 7;
+    let currentPage = 1;
+
+    function goReplayPage() {
+      homePage.classList.add("hidden");
+      replayPage.classList.remove("hidden");
+      renderVideos();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function goHomePage() {
+      replayPage.classList.add("hidden");
+      homePage.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderVideos() {
+      const sortedVideos = [...videos].sort((a, b) => b.date.localeCompare(a.date));
+      const totalPages = Math.ceil(sortedVideos.length / pageSize);
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const currentVideos = sortedVideos.slice(start, end);
+
+      videoList.innerHTML = currentVideos.map(video => `
+        <div class="video-item">
+          <div class="video-date">${video.date}</div>
+          <h3 class="video-title">${video.title}</h3>
+          <p class="video-desc">${video.desc || ""}</p>
+          <a class="video-btn" href="${video.url}" target="_blank" rel="noopener noreferrer">点击观看回放</a>
+        </div>
+      `).join("");
+
+      totalCount.textContent = `共 ${sortedVideos.length} 个视频`;
+      pageInfo.textContent = `第 ${currentPage} / ${totalPages} 页`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderVideos();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(videos.length / pageSize);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderVideos();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  </script>
+</body>
+</html>
