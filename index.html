@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>健身直播回放</title>
-  <meta name="description" content="每日健身直播回放页面" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>阿泽古法健身｜直播回放</title>
+  <meta name="description" content="阿泽古法健身每日直播回放页面" />
   <style>
     :root {
       --bg: #FFF8F3;
@@ -14,24 +14,34 @@
       --primary: #FF6B4A;
       --primary-dark: #F0522E;
       --green: #22C55E;
+      --green-dark: #15803D;
       --border: #F3E8E2;
       --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
     }
 
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
         "Microsoft YaHei", Arial, sans-serif;
-      background: linear-gradient(180deg, #FFFDFB 0%, var(--bg) 100%);
+      background:
+        radial-gradient(circle at 12% 6%, rgba(255,107,74,.16), transparent 28%),
+        radial-gradient(circle at 90% 18%, rgba(34,197,94,.14), transparent 30%),
+        linear-gradient(180deg, #FFFDFB 0%, var(--bg) 100%);
       color: var(--text);
     }
 
+    button, a {
+      font: inherit;
+    }
+
     .container {
-      width: min(960px, calc(100% - 32px));
+      width: min(100% - 24px, 430px);
       margin: 0 auto;
     }
 
@@ -45,22 +55,51 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 32px 0;
+      padding: calc(24px + env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom));
     }
 
     .home-card {
-      width: min(460px, 100%);
-      background: var(--card);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.92);
       border-radius: 28px;
-      padding: 36px 28px;
+      padding: 34px 22px 26px;
       text-align: center;
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
     }
 
+    .home-card::before {
+      content: "";
+      position: absolute;
+      top: -58px;
+      right: -58px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255,107,74,.16);
+    }
+
+    .home-card::after {
+      content: "";
+      position: absolute;
+      left: -48px;
+      bottom: -52px;
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      background: rgba(34,197,94,.14);
+    }
+
+    .home-inner {
+      position: relative;
+      z-index: 1;
+    }
+
     .avatar {
-      width: 120px;
-      height: 120px;
+      width: 118px;
+      height: 118px;
       border-radius: 50%;
       object-fit: cover;
       border: 5px solid #FFE5DD;
@@ -69,15 +108,17 @@
 
     .name {
       margin: 18px 0 8px;
-      font-size: 30px;
-      font-weight: 800;
+      font-size: 32px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: -1px;
     }
 
     .desc {
       margin: 0 0 24px;
       color: var(--muted);
       line-height: 1.7;
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .main-btn {
@@ -85,52 +126,65 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      min-height: 52px;
+      min-height: 54px;
       border: none;
-      border-radius: 16px;
+      border-radius: 17px;
       background: linear-gradient(135deg, var(--primary), #FF8A65);
       color: white;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       box-shadow: 0 12px 24px rgba(255, 107, 74, 0.22);
-      transition: transform .18s ease, opacity .18s ease;
     }
 
-    .main-btn:hover {
-      transform: translateY(-2px);
-      opacity: 0.95;
+    .main-btn:active {
+      transform: scale(.98);
     }
 
     /* 回放页 */
     .replay-page {
-      padding: 24px 0 48px;
+      min-height: 100vh;
+      padding: calc(10px + env(safe-area-inset-top)) 0 calc(32px + env(safe-area-inset-bottom));
     }
 
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin: 0 -12px 12px;
+      padding: 8px 12px 10px;
+      background: rgba(255,248,243,.86);
+      backdrop-filter: blur(14px);
     }
 
     .back-btn {
       border: none;
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 999px;
       padding: 10px 14px;
       cursor: pointer;
       color: var(--text);
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 6px 14px rgba(31,41,55,.05);
+    }
+
+    .page-title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .banner {
       position: relative;
       overflow: hidden;
       border-radius: 24px;
-      height: 220px;
-      margin-bottom: 22px;
+      height: 190px;
+      margin-bottom: 18px;
       box-shadow: var(--shadow);
       background: #ddd;
     }
@@ -145,116 +199,149 @@
     .banner-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(31,41,55,0.65) 0%, rgba(31,41,55,0.22) 60%, rgba(31,41,55,0.08) 100%);
+      background: linear-gradient(90deg, rgba(31,41,55,0.68) 0%, rgba(31,41,55,0.25) 70%, rgba(31,41,55,0.08) 100%);
       display: flex;
-      align-items: center;
-      padding: 28px;
+      align-items: flex-end;
+      padding: 20px;
     }
 
     .banner-text h1 {
       margin: 0 0 8px;
       color: #fff;
-      font-size: clamp(26px, 4vw, 38px);
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -1px;
     }
 
     .banner-text p {
       margin: 0;
       color: rgba(255,255,255,0.92);
-      font-size: 15px;
-      line-height: 1.7;
+      font-size: 13px;
+      line-height: 1.6;
     }
 
     .section-title {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
       gap: 12px;
-      margin: 18px 0 14px;
+      margin: 8px 0 12px;
     }
 
     .section-title h2 {
       margin: 0;
-      font-size: 24px;
+      font-size: 22px;
+      line-height: 1.2;
     }
 
     .section-title span {
       color: var(--muted);
-      font-size: 14px;
+      font-size: 12px;
+      white-space: nowrap;
     }
 
     .video-list {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 14px;
+      gap: 12px;
     }
 
     .video-item {
-      background: var(--card);
+      background: rgba(255,255,255,.94);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
+      border-radius: 20px;
+      padding: 15px;
       box-shadow: 0 8px 20px rgba(31, 41, 55, 0.04);
+    }
+
+    .video-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .video-date {
       display: inline-block;
-      margin-bottom: 10px;
       padding: 6px 10px;
       background: #ECFDF3;
-      color: #15803D;
+      color: var(--green-dark);
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
+    }
+
+    .video-index {
+      min-width: 28px;
+      height: 28px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #FFF0E7;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .video-title {
-      margin: 0 0 8px;
-      font-size: 18px;
-      line-height: 1.5;
+      margin: 0 0 7px;
+      font-size: 17px;
+      line-height: 1.45;
+      font-weight: 900;
     }
 
     .video-desc {
       margin: 0 0 14px;
       color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
+      line-height: 1.6;
+      font-size: 13px;
     }
 
     .video-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 0 16px;
-      text-decoration: none;
-      color: white;
-      background: var(--primary);
-      border-radius: 12px;
-      font-weight: 700;
-      transition: background .18s ease;
-    }
-
-    .video-btn:hover {
-      background: var(--primary-dark);
-    }
-
-    .pagination {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-top: 24px;
-      flex-wrap: wrap;
+      width: 100%;
+      min-height: 46px;
+      padding: 0 16px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--green), var(--primary));
+      border-radius: 14px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(34,197,94,.18);
+    }
+
+    .video-btn:active {
+      transform: scale(.985);
+    }
+
+    .pagination {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px -12px 0;
+      padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(255,248,243,.88);
+      backdrop-filter: blur(14px);
     }
 
     .page-btn {
+      flex: 1;
       border: none;
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-weight: 700;
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 800;
       cursor: pointer;
+      box-shadow: 0 6px 14px rgba(31,41,55,.05);
     }
 
     .page-btn:disabled {
@@ -263,26 +350,11 @@
     }
 
     .page-info {
+      min-width: 76px;
+      text-align: center;
       color: var(--muted);
-      font-size: 14px;
-    }
-
-    @media (max-width: 640px) {
-      .container {
-        width: min(100% - 20px, 960px);
-      }
-
-      .home-card {
-        padding: 28px 20px;
-      }
-
-      .banner {
-        height: 190px;
-      }
-
-      .banner-overlay {
-        padding: 18px;
-      }
+      font-size: 12px;
+      font-weight: 800;
     }
   </style>
 </head>
@@ -291,18 +363,19 @@
   <section id="homePage" class="home">
     <div class="container">
       <div class="home-card">
-        <!-- 这里替换成你的头像 -->
-        <img
-          class="avatar"
-          src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80"
-          alt="头像"
-        />
+        <div class="home-inner">
+          <!-- 这里替换成你的头像 -->
+          <img
+            class="avatar"
+            src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80"
+            alt="头像"
+          />
 
-        <!-- 这里替换成你的名字 -->
-        <div class="name">XX教练</div>
-        <p class="desc">每日健身直播回放 · 碎片时间也能跟练，陪你一起健康减脂、轻松塑形。</p>
+          <div class="name">阿泽古法健身</div>
+          <p class="desc">每日健身直播回放 · 碎片时间也能跟练，陪你一起健康减脂、轻松塑形。</p>
 
-        <button class="main-btn" onclick="goReplayPage()">直播回放</button>
+          <button class="main-btn" onclick="goReplayPage()">直播回放</button>
+        </div>
       </div>
     </div>
   </section>
@@ -312,6 +385,7 @@
     <div class="container">
       <div class="topbar">
         <button class="back-btn" onclick="goHomePage()">← 返回首页</button>
+        <div class="page-title">阿泽古法健身</div>
       </div>
 
       <div class="banner">
@@ -350,58 +424,46 @@
     // =========================
     const videos = [
       {
-        date: "2026-04-28",
-        title: "Day 1｜全身燃脂训练直播回放",
-        desc: "适合减脂新手，20分钟全身激活，帮助提升代谢。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/Cun3geEUI7o"
       },
       {
-        date: "2026-04-27",
-        title: "Day 2｜居家瘦肚子训练直播回放",
-        desc: "重点训练腹部核心，适合居家跟练。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/39v6V4ZRE48"
       },
       {
-        date: "2026-04-26",
-        title: "Day 3｜腿臀塑形训练直播回放",
-        desc: "强化腿臀线条，让下半身更紧致。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/YCfW0xJn2rc"
       },
       {
-        date: "2026-04-25",
-        title: "Day 4｜暴汗有氧燃脂直播回放",
-        desc: "中高强度有氧训练，适合想快速流汗燃脂的人。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/-bJ9m4eGNc4"
       },
       {
-        date: "2026-04-24",
-        title: "Day 5｜肩背体态改善训练回放",
-        desc: "改善圆肩驼背，提升整体气质。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/EM_qs-ICD6M"
       },
       {
-        date: "2026-04-23",
-        title: "Day 6｜新手减脂训练回放",
-        desc: "低门槛动作，新手也能轻松完成。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/HEhf2uN9HLw"
       },
       {
-        date: "2026-04-22",
-        title: "Day 7｜核心稳定训练回放",
-        desc: "重点加强核心稳定性，让运动更安全有效。",
-        url: "https://www.youtube.com/"
-      },
-      {
-        date: "2026-04-21",
-        title: "Day 8｜轻松拉伸放松直播回放",
-        desc: "适合运动后放松，缓解身体紧张。",
-        url: "https://www.youtube.com/"
-      },
-      {
-        date: "2026-04-20",
-        title: "Day 9｜晨间唤醒训练直播回放",
-        desc: "晨间唤醒全身，开启活力一天。",
-        url: "https://www.youtube.com/"
+        date: "2026/4/28",
+        title: "2026/4/28 9点场直播回放",
+        desc: "点击按钮观看本场直播回放",
+        url: "https://www.youtube.com/shorts/855U7uh-lpU"
       }
     ];
 
@@ -415,6 +477,15 @@
 
     const pageSize = 7;
     let currentPage = 1;
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
     function goReplayPage() {
       homePage.classList.add("hidden");
@@ -430,22 +501,24 @@
     }
 
     function renderVideos() {
-      const sortedVideos = [...videos].sort((a, b) => b.date.localeCompare(a.date));
-      const totalPages = Math.ceil(sortedVideos.length / pageSize);
+      const totalPages = Math.max(1, Math.ceil(videos.length / pageSize));
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
-      const currentVideos = sortedVideos.slice(start, end);
+      const currentVideos = videos.slice(start, end);
 
-      videoList.innerHTML = currentVideos.map(video => `
+      videoList.innerHTML = currentVideos.map((video, index) => `
         <div class="video-item">
-          <div class="video-date">${video.date}</div>
-          <h3 class="video-title">${video.title}</h3>
-          <p class="video-desc">${video.desc || ""}</p>
-          <a class="video-btn" href="${video.url}" target="_blank" rel="noopener noreferrer">点击观看回放</a>
+          <div class="video-row">
+            <div class="video-date">${escapeHtml(video.date)}</div>
+            <div class="video-index">${start + index + 1}</div>
+          </div>
+          <h3 class="video-title">${escapeHtml(video.title)}</h3>
+          <p class="video-desc">${escapeHtml(video.desc || "")}</p>
+          <a class="video-btn" href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer">点击观看回放</a>
         </div>
       `).join("");
 
-      totalCount.textContent = `共 ${sortedVideos.length} 个视频`;
+      totalCount.textContent = `共 ${videos.length} 个视频`;
       pageInfo.textContent = `第 ${currentPage} / ${totalPages} 页`;
       prevBtn.disabled = currentPage === 1;
       nextBtn.disabled = currentPage === totalPages || totalPages === 0;
@@ -460,7 +533,7 @@
     }
 
     function nextPage() {
-      const totalPages = Math.ceil(videos.length / pageSize);
+      const totalPages = Math.max(1, Math.ceil(videos.length / pageSize));
       if (currentPage < totalPages) {
         currentPage++;
         renderVideos();
